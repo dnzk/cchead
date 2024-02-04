@@ -37,10 +37,7 @@ impl Config {
     fn count(&self) -> Option<usize> {
         let f = |n: &String| {
             let y = n.parse::<usize>();
-            match y {
-                Ok(_c) => true,
-                _ => false,
-            }
+            matches!(y, Ok(_))
         };
         if let Some(count) = Self::find_by_pattern(&self.raw, f) {
             return Some(count.parse::<usize>().unwrap());
