@@ -1,5 +1,6 @@
 use crate::bytes::Bytes;
 use crate::lines::Lines;
+use crate::options::Options;
 use std::fmt;
 
 pub enum Counter {
@@ -8,20 +9,16 @@ pub enum Counter {
 }
 
 impl Counter {
-    pub fn from(counter_type: &str, count: usize, content: String) -> Result<Counter, String> {
-        match counter_type {
-            "-c" => {
+    pub fn from(content: String, option: Options) -> Result<Counter, String> {
+        match option {
+            Options::Bytes(count) => {
                 let b = Bytes::from(content, count);
                 Ok(Counter::Bytes(b))
             }
-            "-n" => {
-                let n = Lines::from(content, count);
-                Ok(Counter::Lines(n))
+            Options::Lines(count) => {
+                let l = Lines::from(content, count);
+                Ok(Counter::Lines(l))
             }
-            _ => Err(format!(
-                "cchead: invalid option {}\nusage: cchead [-n lines | -c bytes] [file ...]",
-                counter_type
-            )),
         }
     }
 }
