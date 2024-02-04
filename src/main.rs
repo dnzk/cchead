@@ -13,6 +13,6 @@ fn main() {
     let file_path = &args[3];
     if let Ok(content) = fs::read_to_string(file_path) {
         let counter = Counter::from(counting_type, count.parse::<usize>().unwrap(), content);
-        counter.debug();
+        println!("{}", counter);
     }
 }

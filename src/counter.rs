@@ -1,52 +1,37 @@
-pub trait Countable<T> {
-    fn count(&self) -> T;
-}
+use std::fmt;
 
-#[derive(Debug)]
 pub struct Bytes {
     content: String,
     count: usize,
 }
 
-impl Countable<String> for Bytes {
-    fn count(&self) -> String {
-        let mut result: Vec<char> = vec![];
-        let content_chars = self.content.chars();
-        for c in content_chars {
-            if result.len() <= self.count {
-                result.push(c);
-            }
-        }
-        let mut str_result = String::new();
-        for r in result {
-            str_result.push(r);
-        }
-        str_result
+impl fmt::Display for Bytes {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let result = &self.content[..=self.count].to_string().clone();
+        write!(f, "{}", result)
     }
 }
 
-#[derive(Debug)]
 pub struct Lines {
     content: String,
     count: usize,
 }
 
-impl Countable<Vec<String>> for Lines {
-    fn count(&self) -> Vec<String> {
-        let mut lines: Vec<String> = vec![];
-        let content: Vec<&str> = self.content.split('\n').collect();
-        for l in content {
-            if lines.len() < self.count {
-                lines.push(l.to_string());
+impl fmt::Display for Lines {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut result: Vec<&str> = vec![];
+        for l in self.content.lines() {
+            if result.len() < self.count {
+                result.push(l);
             } else {
                 break;
             }
         }
-        lines
+        let result = result.join("\n");
+        write!(f, "{}", result)
     }
 }
 
-#[derive(Debug)]
 pub enum Counter {
     Bytes(Bytes),
     Lines(Lines),
@@ -66,13 +51,17 @@ impl Counter {
             _ => panic!("Unrecognized option {}", counter_type),
         }
     }
+}
 
-    pub fn debug(&self) {
-        if let Counter::Bytes(b) = self {
-            dbg!(b.count());
-        }
-        if let Counter::Lines(l) = self {
-            dbg!(l.count());
+impl fmt::Display for Counter {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Counter::Bytes(b) => {
+                write!(f, "{}", b)
+            }
+            Counter::Lines(l) => {
+                write!(f, "{}", l)
+            }
         }
     }
 }
