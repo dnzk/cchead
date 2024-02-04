@@ -38,17 +38,20 @@ pub enum Counter {
 }
 
 impl Counter {
-    pub fn from(counter_type: &str, count: usize, content: String) -> Self {
+    pub fn from(counter_type: &str, count: usize, content: String) -> Result<Counter, String> {
         match counter_type {
             "-c" => {
                 let b = Bytes { count, content };
-                Counter::Bytes(b)
+                Ok(Counter::Bytes(b))
             }
             "-n" => {
                 let n = Lines { count, content };
-                Counter::Lines(n)
+                Ok(Counter::Lines(n))
             }
-            _ => panic!("Unrecognized option {}", counter_type),
+            _ => Err(format!(
+                "cchead: invalid option {}\nusage: cchead [-n lines | -c bytes] [file ...]",
+                counter_type
+            )),
         }
     }
 }
